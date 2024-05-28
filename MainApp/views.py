@@ -5,8 +5,7 @@ from .forms import RegisterForm
 from BlogApp.models import Author
 
 def main_view(request):
-    context = {}
-    return render(request, 'base.html', context)
+    return redirect("main")
 
 def registration_view(request):
     if request.method == "POST":
