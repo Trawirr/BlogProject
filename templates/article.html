@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    {% if user.author.role == "admin" %}<a style="font-size:18px; text-decoration: underline" href='/blog/usun_post/{{ article.id }}'>usuń</a>{% endif %}
+    <img src="{{ article.image.url }}" style="max-width: 100%; height: auto; margin: 0px !important;">
+</div>
+<h1>{{ article.title }}</h1>
+Autor: {{ article.author.nickname }}, {{ article.date_dmy }} {% for tag in article.tags.all %}<a href="/blog/szukaj/{{ tag.name }}"><span class="article-tag">{{ tag.name }}</span></a>{% endfor %}
+<hr>
+{{ article.parsed_text|safe }}
+<hr>
+<h2>Komentarze:</h2>
+
+<div>
+    {% for comment in article.comments.all %}
+        <div class="comment">
+            <strong>{{ comment.author.nickname }}</strong> {{ article.date_dmy }} {% if user.author.role == "admin" %}<a style="font-size:18px; text-decoration: underline" href='/blog/usun_komentarz/{{ article.id }}/{{ comment.id }}'>usuń</a>{% endif %} <br>
+            <p>{{ comment.text }}</p>
+        </div><br>
+    {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+<hr>
+<h3>Dodaj komentarz</h3>
+<form method="post" action="{% url 'add_comment' article.id %}">
+    {% csrf_token %}
+    <div>
+        <label for="comment">Komentarz:</label><br>
+        <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
+    </div>
+    <div>
+        <button type="submit">Dodaj komentarz</button>
+    </div>
+{% endif %}
+</form>
+
+{% endblock %}

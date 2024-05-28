@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="centerdiv">
+    <a href="/blog/dodaj_post" class="mybtn">Dodaj wpis</a>
+</div>
+{% endif %}
+
+{% for article in articles %}
+<a href="/blog/post/{{ article.id }}" title="{{ article.title }}">
+    <div class="thumbnail"> 
+        <div class="article-image"><img src="{{ article.image.url }}"></div>
+        <!-- <img src="{{ article.image.url }}"> -->
+        <div class="title">{{ article.thumbnail_title }}</div>
+        <div class="author">Autor: {{ article.author.nickname }}, {{ article.date_dmy }}</div>
+        {{ article.thumbnail_text|striptags }}
+    </div>
+</a>
+{% endfor %}
+
+{% endblock %}

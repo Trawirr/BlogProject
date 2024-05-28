@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Nowy post</h1>
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="title">Tytuł:</label><br>
+    <input type="text" id="title" name="title" size="120"><br><br>
+    
+    <label for="tags">Tagi:</label><br>
+    <select id="tags" name="tags" multiple size="5" style="width: 200px">
+        {% for tag in tags %}
+            <option value="{{ tag.name }}">{{ tag.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <textarea id="article_text" name="text" rows="24" cols="120" oninput="updatePreview()"></textarea><br>
+    <button type="button" id="uploadButton" onclick="document.getElementById('image').click()">Wybierz obraz</button>
+    <input type="file" id="image" name="image" style="display:none" onchange="handleFileUpload()"><br>
+    <input type="submit" value="Dodaj">
+</form>
+
+<h2>Podgląd:</h2>
+<div id="selectedImage" style="margin-top: 20px;"></div>
+<div id="preview" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; margin-top: 10px;"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+<script>
+    function handleFileUpload() {
+        const uploadButton = document.getElementById('uploadButton');
+        const fileInput = document.getElementById('image');
+        const file = fileInput.files[0];
+        const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+        if (file) {
+            if (validImageTypes.includes(file.type)) {
+                uploadButton.textContent = 'Plik wybrany';
+                // Display selected image
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const selectedImage = document.getElementById('selectedImage');
+                    selectedImage.innerHTML = '<img src="' + event.target.result + '" style="max-width: 100%; height: auto; margin: 0px !important;">';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                uploadButton.textContent = 'Nieprawidłowy plik';
+                fileInput.value = ''; // Clear the file input
+            }
+        } else {
+            uploadButton.textContent = 'Wybierz obraz';
+        }
+    }
+
+    function updatePreview() {
+        const textarea = document.getElementById('article_text');
+        const preview = document.getElementById('preview');
+        preview.innerHTML = DOMPurify.sanitize(textarea.value);
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blog</title>
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    </head>
+<body>
+
+<div class="topnav">
+    <ul>
+        <li><a class="active" href="/blog/">Strona główna</a></li>
+        {% comment %} <li><a href="#">Informacje</a></li> {% endcomment %}
+        {% if user.is_authenticated %}
+            <li><a href="#" id="logout-link" class="user-info">Wyloguj</a></li>
+            <form id="logout-form" method="POST" action="{% url 'logout' %}" style="display: none;">
+                {% csrf_token %}
+            </form>
+        {% else %}
+        <li><a href="{% url 'login' %}" class="user-info">Zaloguj się</a></li>
+        {% endif %}
+        {% comment %} <li><img alt="prof_img" src="{{ user.author.profile_image.url|default:'/static/upload/profile_images/default_icon.png' }}" width="30" height="30" class="user-image"></li> {% endcomment %}
+        <li><a href="#" class="user-nickname" style="cursor: default">{{ user.author.nickname|default:"Gość" }}</a></li>
+    </ul>
+</div>
+
+<div class="center">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script>
+    document.getElementById("logout-link").addEventListener("click", function(event) {
+        event.preventDefault();
+        document.getElementById("logout-form").submit();
+    });
+</script>
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
